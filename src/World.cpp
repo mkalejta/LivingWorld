@@ -1,5 +1,7 @@
-#include "World.h"
+#include "../include/World.h"
 #include <fstream>
+#include <algorithm>
+#include <iostream>
 
 string World::getOrganismFromPosition(int x, int y)
 {	

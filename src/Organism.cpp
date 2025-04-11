@@ -1,4 +1,4 @@
-#include "Organism.h"
+#include "../include/Organism.h"
 
 Organism::Organism(int power, Position position)
 {
