@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <utility>
+#include <vector>
 #include "Position.h"
 
 using namespace std;
@@ -10,6 +12,8 @@ private:
 	int power;
 	Position position;
 	string species;
+protected:
+	vector<pair<int, int>> ancestors; // (birth_turn, death_turn)
 public:
 	Organism(int power, Position position);
 	Organism() : power(0), position(0, 0), species("O") {};
@@ -20,6 +24,8 @@ public:
 	void setPosition(Position position);
 	string getSpecies();
 	void setSpecies(string spec);
+
+	void addAncestor(int birthTurn, int deathTurn);
 
 	string toString();
 
