@@ -8,7 +8,7 @@
 using namespace std;
 
 int main()
-{
+{	
 	// Position 
 	Position p1;
 	Position p2{ 1, 1 };

@@ -17,6 +17,16 @@ protected:
 public:
 	Organism(int power, Position position);
 	Organism() : power(0), position(0, 0), species("O") {};
+	// Konstruktor kopiujący
+    Organism(const Organism& other);
+    // Konstruktor przenoszący
+    Organism(Organism&& other) noexcept;
+    // Operator przypisania kopiujący
+    Organism& operator=(const Organism& other);
+    // Operator przypisania przenoszący
+    Organism& operator=(Organism&& other) noexcept;
+    // Destruktor
+    virtual ~Organism();
 
 	int getPower();
 	void setPower(int power);

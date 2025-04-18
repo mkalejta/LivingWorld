@@ -1,4 +1,5 @@
 #include "../include/Organism.h"
+#include <iostream>
 
 Organism::Organism(int power, Position position)
 {
@@ -39,6 +40,9 @@ Organism& Organism::operator=(Organism&& other) noexcept {
     }
     return *this;
 }
+
+// Destruktor
+Organism::~Organism() {}
 
 int Organism::getPower()
 {
