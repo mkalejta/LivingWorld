@@ -41,9 +41,6 @@ Organism& Organism::operator=(Organism&& other) noexcept {
     return *this;
 }
 
-// Destruktor
-Organism::~Organism() {}
-
 int Organism::getPower()
 {
 	return this->power;

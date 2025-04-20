@@ -1,8 +1,11 @@
 #include <iostream>
 #include "Position.h"
 #include "Organism.h"
-#include "Plant.h"
-#include "Animal.h"
+#include "Cow.h"
+#include "Wolf.h"
+#include "Sheep.h"
+#include "Guarana.h"
+#include "Grass.h"
 #include "World.h"
 
 using namespace std;
@@ -31,15 +34,11 @@ int main()
 	//cout << org1.toString() << endl;
 
 	// Plant & Animal
-	Plant plant{ 3, p3 };
-	Animal animal{ 5, p2 };
-	Plant plant2;
-	Animal animal2;
+	Grass plant{ p3 };
+	Cow animal{ p2 };
 
 	cout << plant.toString() << endl;
 	cout << animal.toString() << endl;
-	cout << plant2.toString() << endl;
-	cout << animal2.toString() << endl;
 	plant.move(3, 4);
 	cout << plant.toString() << endl;
 	animal.move(1, 2);
@@ -48,14 +47,14 @@ int main()
 	// World test
 	World world;
 	Position posP1{ 4, 5 };
-	Plant plantW1{ 3, posP1 };
+	Grass plantW1{ posP1 };
 	Position posP2{ 5, 4 };
-	Plant plantW2{ 3, posP2 };
+	Guarana plantW2{ posP2 };
 
 	Position posW2{ 3, 2 };
-	Animal animalW1{ 6, posW2 };
+	Wolf animalW1{ posW2 };
 	Position posW3{ 2, 3 };
-	Animal animalW2{ 6, posW3 };
+	Sheep animalW2{ posW3 };
 
 	world.addOrganism(&plantW1);
 	world.addOrganism(&plantW2);

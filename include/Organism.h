@@ -26,7 +26,7 @@ public:
     // Operator przypisania przenoszący
     Organism& operator=(Organism&& other) noexcept;
     // Destruktor
-    virtual ~Organism();
+    virtual ~Organism() = default;
 
 	int getPower();
 	void setPower(int power);
@@ -40,5 +40,8 @@ public:
 	string toString();
 
 	virtual void move(int dx, int dy);
+	virtual char draw() const = 0;
+	virtual void action() = 0;
+	virtual void collision(Organism* other) = 0;
 
 };

@@ -12,7 +12,7 @@ private:
 	int worldX;
 	int worldY;
 	int turn = 0;
-	vector<Organism> organisms;
+	vector<Organism*> organisms;
 	char separator = '.';
 
 	string getOrganismFromPosition(int x, int y);
@@ -22,6 +22,7 @@ private:
 public:
 	World(int worldX, int worldY);
 	World() : World(6, 6) {};
+	~World();
 
 	int getWorldX();
 	void setWorldX(int worldX);

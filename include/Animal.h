@@ -8,6 +8,7 @@ class Animal : public Organism
 	public:
 		Animal(int power, Position position);
 		Animal();
-
+		using Organism::Organism;
+		virtual ~Animal() = default;
 };
 
