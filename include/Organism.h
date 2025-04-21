@@ -14,6 +14,7 @@ private:
 	string species;
 protected:
 	vector<pair<int, int>> ancestors; // (birth_turn, death_turn)
+	bool alive = true;
 public:
 	Organism(int power, Position position);
 	Organism() : power(0), position(0, 0), species("O") {};
@@ -38,10 +39,13 @@ public:
 	void addAncestor(int birthTurn, int deathTurn);
 
 	string toString();
+	bool isAlive() const { return alive; }
+    void kill() { alive = false; }
 
 	virtual void move(int dx, int dy);
 	virtual char draw() const = 0;
 	virtual void action() = 0;
 	virtual void collision(Organism* other) = 0;
 
+	
 };

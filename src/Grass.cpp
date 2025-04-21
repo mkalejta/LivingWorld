@@ -1,6 +1,6 @@
-#include "Grass.h"
+#include "../include/Grass.h"
 
-Grass::Grass(Position pos) : Plant(0, pos) 
+Grass::Grass(Position pos) : Plant(1, pos) 
 {
     setSpecies("g");
 }
@@ -15,10 +15,9 @@ char Grass::draw() const {
 }
 
 void Grass::action() {
-    // np. rozprzestrzenianie się
+    // np. brak ruchu
 }
 
 void Grass::collision(Organism* other) {
-    // trawa nie walczy, zostaje zjedzona
-    setPower(0);
+    setPower(0); // Trawa nie walczy, zostaje zjedzona
 }

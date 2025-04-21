@@ -22,6 +22,6 @@ void Cow::action() {
 void Cow::collision(Organism* other) {
     Plant* plant = dynamic_cast<Plant*>(other);
     if (plant && other->getPower() < this->getPower()) {
-        other->setPower(0);
+        other->kill();
     }
 }

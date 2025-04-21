@@ -1,6 +1,6 @@
 #include "Guarana.h"
 
-Guarana::Guarana(Position pos) : Plant(3, pos) 
+Guarana::Guarana(Position pos) : Plant(2, pos) 
 {
     setSpecies("G");
 }

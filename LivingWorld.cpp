@@ -12,79 +12,58 @@ using namespace std;
 
 int main()
 {	
-	// Position 
-	Position p1;
-	Position p2{ 1, 1 };
-	Position p3{ -3, -5 };
-
-	//cout << p1.toString() << endl;
-	//cout << p2.toString() << endl;
-	//cout << p3.toString() << endl;
-	//cout << p1.distance(p2) << endl;
-	//p2.move(4, 6);
-	//cout << p2.toString() << endl;
-
-	// Organism
-	//Organism org1;
-	//Organism org2{ 10, p2 };
-
-	//cout << org1.toString() << endl;
-	//cout << org2.toString() << endl;
-	//org1.move(2, 3);
-	//cout << org1.toString() << endl;
-
-	// Plant & Animal
-	Grass plant{ p3 };
-	Cow animal{ p2 };
-
-	cout << plant.toString() << endl;
-	cout << animal.toString() << endl;
-	plant.move(3, 4);
-	cout << plant.toString() << endl;
-	animal.move(1, 2);
-	cout << animal.toString() << endl;
-	
 	// World test
-	World world;
-	Position posP1{ 4, 5 };
-	Grass plantW1{ posP1 };
-	Position posP2{ 5, 4 };
-	Guarana plantW2{ posP2 };
+	World world(10, 10);
 
-	Position posW2{ 3, 2 };
-	Wolf animalW1{ posW2 };
-	Position posW3{ 2, 3 };
-	Sheep animalW2{ posW3 };
+	// Trawa i krowa – test collision Cow–Grass
+	Position posGrass1{ 5, 5 };
+	Grass* grass1 = new Grass(posGrass1);
+	world.addOrganism(grass1);
 
-	world.addOrganism(&plantW1);
-	world.addOrganism(&plantW2);
-	world.addOrganism(&animalW1);
-	world.addOrganism(&animalW2);
+	Position posCow{ 6, 5 };
+	Cow* cow = new Cow(posCow);
+	world.addOrganism(cow);
 
-	auto positions = world.getVectorOfFreePositionsAround(Position(5, 5));
+	// Guarana i owca – test collision Sheep–Guarana
+	Position posGuarana{ 2, 2 };
+	Guarana* guarana = new Guarana(posGuarana);
+	world.addOrganism(guarana);
 
-	for(auto pos: positions)
-		cout << pos.toString() << endl;
+	Position posSheep{ 2, 1 };
+	Sheep* sheep = new Sheep(posSheep);
+	world.addOrganism(sheep);
 
-	// Tura 0
+	// Wilk i owca – test collision Wolf–Sheep
+	Position posWolf{ 6, 6 };
+	Wolf* wolf = new Wolf(posWolf);
+	world.addOrganism(wolf);
+
+	Position posSheep2{ 7, 5 };
+	Sheep* sheep2 = new Sheep(posSheep2);
+	world.addOrganism(sheep2);
+
+	// Wypisz planszę i wykonaj kilka tur
+	cout << "Tura 0:\n";
 	cout << world.toString() << endl;
 
-	// Tura 1
+	cout << "Tura 1:\n";
 	world.makeTurn();
 	cout << world.toString() << endl;
 
-	// Tura 2
+	cout << "Tura 2:\n";
 	world.makeTurn();
 	cout << world.toString() << endl;
 
+	// Zapisz stan
 	world.writeWorld("world.bin");
 
-	// Tura 3
+	cout << "Tura 3:\n";
 	world.makeTurn();
 	cout << world.toString() << endl;
 
-	// powrot do Tury 2
+	// Powrót do tury 2
 	world.readWorld("world.bin");
+	cout << "Powrót do tury 2:\n";
 	cout << world.toString() << endl;
 
 	return 0;

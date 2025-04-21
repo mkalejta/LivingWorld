@@ -6,6 +6,11 @@
 
 using namespace std;
 
+struct GrassRegrowInfo {
+    Position position;
+    int turnsLeft;
+};
+
 class World
 {
 private:
@@ -14,10 +19,10 @@ private:
 	int turn = 0;
 	vector<Organism*> organisms;
 	char separator = '.';
-
 	string getOrganismFromPosition(int x, int y);
 	bool isPositionOnWorld(int x, int y);
 	bool isPositionFree(Position position);
+	std::vector<std::pair<Position, int>> grassToRegrow;
 
 public:
 	World(int worldX, int worldY);
@@ -39,6 +44,13 @@ public:
 	void readWorld(string fileName);
 	
 	string toString();
+
+    void markGrassToRegrow(Position pos);
+    void updateGrassRegrowth();
+    void removeOrganism(Organism* org);
+
+	Organism* getOrganismAt(Position pos) const;
+	void removeDeadOrganisms();
 
 };
 

@@ -87,23 +87,72 @@ void World::addOrganism(Organism* organism)
     this->organisms.push_back(organism);
 }
 
-void World::makeTurn()
-{
-    vector<Position> newPositions;
-    int numberOfNewPositions;
-    int randomIndex;
+void World::removeOrganism(Organism* org) {
+    // Jeśli organizm to trawa, zaznacz pozycję do regeneracji
+    Grass* grass = dynamic_cast<Grass*>(org);
+    if (grass != nullptr) {
+        markGrassToRegrow(grass->getPosition());
+    }
 
-    srand(time(0));
-    for (Organism* org : organisms) {
-        newPositions = getVectorOfFreePositionsAround(org->getPosition());
-        numberOfNewPositions = newPositions.size();
-        if (numberOfNewPositions > 0) {
-            randomIndex = rand() % numberOfNewPositions;
-            org->setPosition(newPositions[randomIndex]);
+    // Usuń z wektora organisms
+    auto it = std::find(organisms.begin(), organisms.end(), org);
+    if (it != organisms.end()) {
+        organisms.erase(it);
+    }
+
+    delete org;
+}
+
+Organism* World::getOrganismAt(Position pos) const {
+    for (Organism* o : organisms) {
+        if (o->getPosition() == pos)
+            return o;
+    }
+    return nullptr;
+}
+
+void World::removeDeadOrganisms() {
+    auto it = organisms.begin();
+    while (it != organisms.end()) {
+        if (!(*it)->isAlive()) {
+            Grass* grass = dynamic_cast<Grass*>(*it);
+            if (grass != nullptr) {
+                markGrassToRegrow(grass->getPosition());
+            }
+            delete *it;
+            it = organisms.erase(it);
+        } else {
+            ++it;
         }
     }
+}
+
+void World::makeTurn() {
+    srand(time(0));
+    vector<Organism*> currentOrganisms = organisms;
+
+    for (Organism* org : currentOrganisms) {
+        if (find(organisms.begin(), organisms.end(), org) == organisms.end())
+            continue;
+
+        org->action(); // organizm wykonuje swój ruch (zmienia pozycję)
+
+        Position newPos = org->getPosition();
+
+        // Sprawdzamy, czy coś jest na nowej pozycji
+        Organism* other = getOrganismAt(newPos);
+
+        // Możemy trafić sami na siebie, więc sprawdzamy wskaźniki
+        if (other != nullptr && other != org) {
+            org->collision(other);
+        }
+    }
+
+    removeDeadOrganisms(); 
+    updateGrassRegrowth();
     turn++;
 }
+
 
 void World::writeWorld(string fileName)
 {
@@ -198,3 +247,22 @@ string World::toString()
     }
     return result;
 }
+
+void World::markGrassToRegrow(Position pos) {
+    grassToRegrow.push_back({pos, 2}); // odrodzenie za 2 tury
+}
+
+void World::updateGrassRegrowth() {
+    for (auto it = grassToRegrow.begin(); it != grassToRegrow.end();) {
+        it->second--;
+        if (it->second <= 0) {
+            // Odrodzenie trawy w danej pozycji
+            addOrganism(new Grass(it->first));
+            it = grassToRegrow.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+
