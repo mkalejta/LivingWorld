@@ -46,6 +46,6 @@ public:
 	virtual char draw() const = 0;
 	virtual void action() = 0;
 	virtual void collision(Organism* other) = 0;
-
+	virtual bool isPredator() const { return false; }
 	
 };

@@ -1,5 +1,6 @@
 #include "../include/Cow.h"
 #include "../include/Plant.h"
+#include "../include/Wolf.h"
 
 Cow::Cow(Position pos) : Animal(6, pos)
 {
@@ -24,4 +25,8 @@ void Cow::collision(Organism* other) {
     if (plant && other->getPower() < this->getPower()) {
         other->kill();
     }
+
+    if (other->isPredator()) {
+        this->kill();
+    }    
 }

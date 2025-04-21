@@ -103,6 +103,23 @@ void World::removeOrganism(Organism* org) {
     delete org;
 }
 
+void World::markGrassToRegrow(Position pos) {
+    grassToRegrow.push_back({pos, 3}); // odrodzenie za 2 tury
+}
+
+void World::updateGrassRegrowth() {
+    for (auto it = grassToRegrow.begin(); it != grassToRegrow.end();) {
+        it->second--;
+        if (it->second <= 0) {
+            // Odrodzenie trawy w danej pozycji
+            addOrganism(new Grass(it->first));
+            it = grassToRegrow.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
 Organism* World::getOrganismAt(Position pos) const {
     for (Organism* o : organisms) {
         if (o->getPosition() == pos)
@@ -127,29 +144,35 @@ void World::removeDeadOrganisms() {
     }
 }
 
+void World::sortOrganisms() {
+    std::sort(organisms.begin(), organisms.end(),
+        [](Organism* a, Organism* b) {
+            return a->getPower() > b->getPower();
+        });
+}
+
 void World::makeTurn() {
-    srand(time(0));
+    sortOrganisms();
+
     vector<Organism*> currentOrganisms = organisms;
 
     for (Organism* org : currentOrganisms) {
+        // Jeśli organizm już nie istnieje (umarł lub zniknął)
         if (find(organisms.begin(), organisms.end(), org) == organisms.end())
             continue;
 
-        org->action(); // organizm wykonuje swój ruch (zmienia pozycję)
+        org->action();
 
         Position newPos = org->getPosition();
-
-        // Sprawdzamy, czy coś jest na nowej pozycji
         Organism* other = getOrganismAt(newPos);
 
-        // Możemy trafić sami na siebie, więc sprawdzamy wskaźniki
-        if (other != nullptr && other != org) {
+        if (other != nullptr && other != org && other->isAlive()) {
             org->collision(other);
         }
     }
 
     removeDeadOrganisms(); 
-    updateGrassRegrowth();
+    updateGrassRegrowth(); 
     turn++;
 }
 
@@ -247,22 +270,3 @@ string World::toString()
     }
     return result;
 }
-
-void World::markGrassToRegrow(Position pos) {
-    grassToRegrow.push_back({pos, 2}); // odrodzenie za 2 tury
-}
-
-void World::updateGrassRegrowth() {
-    for (auto it = grassToRegrow.begin(); it != grassToRegrow.end();) {
-        it->second--;
-        if (it->second <= 0) {
-            // Odrodzenie trawy w danej pozycji
-            addOrganism(new Grass(it->first));
-            it = grassToRegrow.erase(it);
-        } else {
-            ++it;
-        }
-    }
-}
-
-

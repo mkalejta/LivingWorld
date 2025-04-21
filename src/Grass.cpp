@@ -19,5 +19,5 @@ void Grass::action() {
 }
 
 void Grass::collision(Organism* other) {
-    setPower(0); // Trawa nie walczy, zostaje zjedzona
+    this->kill(); // trawa zostaje zjedzona
 }

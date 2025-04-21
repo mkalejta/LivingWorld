@@ -21,5 +21,5 @@ void Guarana::action() {
 void Guarana::collision(Organism* other) {
     // Guarana zwiększa siłę organizmu który ją "zjada"
     other->setPower(other->getPower() + 1);
-    setPower(0); // Guarana ginie
+    this->kill();
 }

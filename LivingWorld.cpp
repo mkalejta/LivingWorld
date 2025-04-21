@@ -34,30 +34,26 @@ int main()
 	world.addOrganism(sheep);
 
 	// Wilk i owca – test collision Wolf–Sheep
-	Position posWolf{ 6, 6 };
-	Wolf* wolf = new Wolf(posWolf);
-	world.addOrganism(wolf);
-
 	Position posSheep2{ 7, 5 };
 	Sheep* sheep2 = new Sheep(posSheep2);
 	world.addOrganism(sheep2);
 
+	Position posWolf{ 6, 6 };
+	Wolf* wolf = new Wolf(posWolf);
+	world.addOrganism(wolf);
+
 	// Wypisz planszę i wykonaj kilka tur
-	cout << "Tura 0:\n";
 	cout << world.toString() << endl;
 
-	cout << "Tura 1:\n";
 	world.makeTurn();
 	cout << world.toString() << endl;
 
-	cout << "Tura 2:\n";
 	world.makeTurn();
 	cout << world.toString() << endl;
 
 	// Zapisz stan
 	world.writeWorld("world.bin");
 
-	cout << "Tura 3:\n";
 	world.makeTurn();
 	cout << world.toString() << endl;
 
