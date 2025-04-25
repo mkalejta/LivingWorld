@@ -177,79 +177,56 @@ void World::makeTurn() {
 }
 
 
-void World::writeWorld(string fileName)
-{
-    fstream my_file;
-    my_file.open(fileName, ios::out | ios::binary);
-    if (my_file.is_open()) {
-        my_file.write((char*)&this->worldX, sizeof(int));
-        my_file.write((char*)&this->worldY, sizeof(int));
-        my_file.write((char*)&this->turn, sizeof(int));
-        int orgs_size = this->organisms.size();
-        my_file.write((char*)&orgs_size, sizeof(int));
-        for (int i = 0; i < orgs_size; i++) {
-            int data;
-            data = this->organisms[i]->getPower();
-            my_file.write((char*)&data, sizeof(int));
-            data = this->organisms[i]->getPosition().getX();
-            my_file.write((char*)&data, sizeof(int));
-            data = this->organisms[i]->getPosition().getY();
-            my_file.write((char*)&data, sizeof(int));
-            string s_data = this->organisms[i]->getSpecies();
-            int s_size = s_data.size();
-            my_file.write((char*)&s_size, sizeof(int));
-            my_file.write(s_data.data(), s_data.size());
+void World::writeWorld(string fileName) {
+    fstream file(fileName, ios::out | ios::binary);
+    if (file.is_open()) {
+        file.write((char*)&worldX, sizeof(int));
+        file.write((char*)&worldY, sizeof(int));
+        file.write((char*)&turn, sizeof(int));
+        int orgsSize = organisms.size();
+        file.write((char*)&orgsSize, sizeof(int));
+        for (Organism* org : organisms) {
+            org->serialize(file);
         }
-        my_file.close();
+        file.close();
     }
 }
 
-void World::readWorld(string fileName)
-{
-    fstream my_file;
-    my_file.open(fileName, ios::in | ios::binary);
-    if (my_file.is_open()) {
-        int result;
-        my_file.read((char*)&result, sizeof(int));
-        this->worldX = (int)result;
-        my_file.read((char*)&result, sizeof(int));
-        this->worldY = (int)result;
-        my_file.read((char*)&result, sizeof(int));
-        this->turn = (int)result;
-        my_file.read((char*)&result, sizeof(int));
-        int orgs_size = (int)result;
+void World::readWorld(string fileName) {
+    fstream file(fileName, ios::in | ios::binary);
+    if (file.is_open()) {
+        int orgsSize;
+        file.read((char*)&worldX, sizeof(int));
+        file.read((char*)&worldY, sizeof(int));
+        file.read((char*)&turn, sizeof(int));
+        file.read((char*)&orgsSize, sizeof(int));
+        organisms.clear();
 
-        for (int i = 0; i < orgs_size; i++) {
-            int power;
-            my_file.read((char*)&result, sizeof(int));
-            power = (int)result;
-
-            int pos_x;
-            my_file.read((char*)&result, sizeof(int));
-            pos_x = (int)result;
-            int pos_y;
-            my_file.read((char*)&result, sizeof(int));
-            pos_y = (int)result;
-            Position pos{ pos_x, pos_y };
-
-            int s_size;
-            my_file.read((char*)&result, sizeof(int));
-            s_size = (int)result;
-
+        for (int i = 0; i < orgsSize; ++i) {
             string species;
-            species.resize(s_size);
-            my_file.read((char*)&species[0], s_size);
+            int speciesSize;
+            file.read((char*)&speciesSize, sizeof(int));
+            species.resize(speciesSize);
+            file.read(&species[0], speciesSize);
+
+            int x, y;
+            file.read((char*)&x, sizeof(int));
+            file.read((char*)&y, sizeof(int));
+            Position pos(x, y);
 
             Organism* org = nullptr;
-            if (species == "Wolf") org = new Wolf(power, pos);
-            else if (species == "Sheep") org = new Sheep(power, pos);
-            else if (species == "Cow") org = new Cow(power, pos);
-            else if (species == "Guarana") org = new Guarana(power, pos);
-            else if (species == "Grass") org = new Grass(power, pos);
+            if (species == "g") org = new Grass(pos);
+            else if (species == "G") org = new Guarana(pos);
+            else if (species == "W") org = new Wolf(pos);
+            else if (species == "S") org = new Sheep(pos);
+            else if (species == "C") org = new Cow(pos);
 
-            if (org) organisms.push_back(org);
+            if (org) {
+                org->deserialize(file);
+                organisms.push_back(org);
+            }
         }
-        my_file.close();
+        file.close();
     }
 }
 

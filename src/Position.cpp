@@ -8,7 +8,7 @@ Position::Position(int x, int y)
 	setY(y);
 }
 
-int Position::getX()
+int Position::getX() const
 {
 	return this->x;
 }
@@ -21,7 +21,7 @@ void Position::setX(int x)
 		this->x = 0;
 }
 
-int Position::getY()
+int Position::getY() const
 {
 	return this->y;
 }

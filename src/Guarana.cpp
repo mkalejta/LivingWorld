@@ -33,3 +33,11 @@ void Guarana::grow() {
         }
     }
 }
+
+void Guarana::serialize(fstream& file) const {
+    Plant::serialize(file); // Wywołanie serializacji klasy bazowej
+}
+
+void Guarana::deserialize(fstream& file) {
+    Plant::deserialize(file); // Wywołanie deserializacji klasy bazowej
+}

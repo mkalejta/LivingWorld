@@ -35,3 +35,11 @@ void Cow::collision(Organism* other) {
 void Cow::sound() const {
     std::cout << "Cow sound!" << std::endl;
 }
+
+void Cow::serialize(fstream& file) const {
+    Organism::serialize(file); // Wywołanie serializacji klasy bazowej
+}
+
+void Cow::deserialize(fstream& file) {
+    Organism::deserialize(file); // Wywołanie deserializacji klasy bazowej
+}

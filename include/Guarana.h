@@ -9,4 +9,7 @@ public:
     void action() override;
     void collision(Organism* other) override;
     void grow() override;
+
+    void serialize(fstream& file) const override;
+    void deserialize(fstream& file) override;
 };

@@ -37,3 +37,11 @@ bool Wolf::isPredator() const {
 void Wolf::sound() const {
     std::cout << "Wolf sound!" << std::endl;
 }
+
+void Wolf::serialize(fstream& file) const {
+    Organism::serialize(file); // Wywołanie serializacji klasy bazowej
+}
+
+void Wolf::deserialize(fstream& file) {
+    Organism::deserialize(file); // Wywołanie deserializacji klasy bazowej
+}
