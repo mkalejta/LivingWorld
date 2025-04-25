@@ -1,4 +1,5 @@
 #include "../include/Grass.h"
+#include <iostream>
 
 Grass::Grass(Position pos) : Plant(1, pos) 
 {
@@ -20,4 +21,12 @@ void Grass::action() {
 
 void Grass::collision(Organism* other) {
     this->kill(); // trawa zostaje zjedzona
+}
+
+void Grass::grow() {
+    if (getPower() < 5) {
+        if (rand() % 100 < 15) {
+            std::cout << "Grass has grown!" << std::endl;
+        }
+    }
 }

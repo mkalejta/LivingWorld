@@ -1,4 +1,5 @@
 #include "Guarana.h"
+#include <iostream>
 
 Guarana::Guarana(Position pos) : Plant(2, pos) 
 {
@@ -22,4 +23,13 @@ void Guarana::collision(Organism* other) {
     // Guarana zwiększa siłę organizmu który ją "zjada"
     other->setPower(other->getPower() + 1);
     this->kill();
+}
+
+void Guarana::grow() {
+    if (getPower() < 5) {
+        if (rand() % 100 < 15) {
+            setPower(getPower() + 1);
+            std::cout << "Guarana has grown! New power: " << getPower() << std::endl;
+        }
+    }
 }

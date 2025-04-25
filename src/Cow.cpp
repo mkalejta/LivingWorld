@@ -1,6 +1,7 @@
 #include "../include/Cow.h"
 #include "../include/Plant.h"
 #include "../include/Wolf.h"
+#include <iostream>
 
 Cow::Cow(Position pos) : Animal(6, pos)
 {
@@ -29,4 +30,8 @@ void Cow::collision(Organism* other) {
     if (other->isPredator()) {
         this->kill();
     }    
+}
+
+void Cow::sound() const {
+    std::cout << "Cow sound!" << std::endl;
 }

@@ -9,4 +9,5 @@ public:
     void action() override;
     void collision(Organism* other) override;
     bool isPredator() const override;
+    void sound() const override;
 };

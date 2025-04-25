@@ -33,3 +33,7 @@ void Wolf::collision(Organism* other) {
 bool Wolf::isPredator() const {
     return true;
 }
+
+void Wolf::sound() const {
+    std::cout << "Wolf sound!" << std::endl;
+}

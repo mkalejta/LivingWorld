@@ -10,5 +10,6 @@ class Animal : public Organism
 		Animal();
 		using Organism::Organism;
 		virtual ~Animal() = default;
+		virtual void sound() const = 0;
 };
 

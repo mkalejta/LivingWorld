@@ -8,4 +8,5 @@ public:
     char draw() const override;
     void action() override;
     void collision(Organism* other) override;
+    void grow() override;
 };

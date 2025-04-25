@@ -8,5 +8,6 @@ class Plant : public Organism
 		Plant();
 		using Organism::Organism;
 		virtual ~Plant() = default;
+		virtual void grow() = 0;
 };
 
