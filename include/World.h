@@ -1,9 +1,11 @@
 #pragma once
-
 #include <vector>
 #include <ctime>
 #include "Organism.h"
 #include "Position.h"
+
+// Deklaracja wstępna klasy Organism
+class Organism;
 
 using namespace std;
 
@@ -21,7 +23,6 @@ private:
 	vector<Organism*> organisms;
 	char separator = '.';
 	string getOrganismFromPosition(int x, int y);
-	bool isPositionOnWorld(int x, int y);
 	bool isPositionFree(Position position);
 	std::vector<std::pair<Position, int>> grassToRegrow;
 
@@ -55,5 +56,7 @@ public:
 	void sortOrganisms();
 
 	void getOrganisms();
+
+	bool isPositionOnWorld(int x, int y);
 };
 

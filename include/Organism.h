@@ -4,6 +4,9 @@
 #include <vector>
 #include <fstream>
 #include "Position.h"
+#include "World.h"
+
+class World;
 
 using namespace std;
 
@@ -13,6 +16,9 @@ private:
     int power;
     Position position;
     string species;
+    int initiative; // Priorytet decydujący o kolejności ruchu
+    int liveLength; // Liczba tur do końca życia
+    int powerToReproduce; // Minimalna siła do rozmnażania
 
 protected:
     vector<pair<int, int>> ancestors; // (birth_turn, death_turn)
@@ -33,6 +39,10 @@ public:
     void setPosition(Position position);
     string getSpecies() const;
     void setSpecies(string spec);
+    int getPowerToReproduce() const { return powerToReproduce; }
+    void setPowerToReproduce(int powerToReproduce) { this->powerToReproduce = powerToReproduce; }
+    int getLiveLength() const { return liveLength; }
+    void setLiveLength(int liveLength) { this->liveLength = liveLength; }
 
     void addAncestor(int birthTurn, int deathTurn);
 
@@ -42,9 +52,10 @@ public:
 
     virtual void move(int dx, int dy);
     virtual char draw() const = 0;
-    virtual void action() = 0;
-    virtual void collision(Organism* other) = 0;
-    virtual bool isPredator() const { return false; }
+    virtual void action(World& world) = 0;
+    virtual void collision(Organism* other, World& world) = 0;
+    virtual bool isPredator() const { return false; };
+    virtual void reproduce(World& world) = 0;
 
     // Serializacja
     virtual void serialize(fstream& file) const;

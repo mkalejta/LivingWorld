@@ -1,4 +1,5 @@
-#include "../include/World.h"
+#include "World.h"
+#include "Organism.h"
 #include <fstream>
 #include <algorithm>
 #include <iostream>
@@ -7,6 +8,7 @@
 #include "Cow.h"
 #include "Guarana.h"
 #include "Grass.h"
+#include "Toadstool.h"
 
 using namespace std;
 
@@ -104,7 +106,7 @@ void World::removeOrganism(Organism* org) {
 }
 
 void World::markGrassToRegrow(Position pos) {
-    grassToRegrow.push_back({pos, 3}); // odrodzenie za 2 tury
+    grassToRegrow.push_back({pos, 3}); // odrodzenie za 3 tury
 }
 
 void World::updateGrassRegrowth() {
@@ -161,14 +163,23 @@ void World::makeTurn() {
         if (find(organisms.begin(), organisms.end(), org) == organisms.end())
             continue;
 
-        org->action();
+        org->setPower(org->getPower() + 1);
+        org->setLiveLength(org->getLiveLength() - 1);
 
+        if (org->getLiveLength() <= 0) {
+            org->kill();
+        }
+
+        org->action(*this);
+        
         Position newPos = org->getPosition();
         Organism* other = getOrganismAt(newPos);
-
+        
         if (other != nullptr && other != org && other->isAlive()) {
-            org->collision(other);
+            org->collision(other, *this);
         }
+        
+        org->reproduce(*this);
     }
 
     removeDeadOrganisms(); 
@@ -219,6 +230,11 @@ void World::readWorld(string fileName) {
             else if (species == "W") org = new Wolf(power, pos);
             else if (species == "S") org = new Sheep(power, pos);
             else if (species == "C") org = new Cow(power, pos);
+            else if (species == "T") org = new Toadstool(power, pos);
+            else {
+                std::cerr << "Unknown species: " << species << std::endl;
+                continue;
+            }
             
             if (org) {
                 organisms.push_back(org);

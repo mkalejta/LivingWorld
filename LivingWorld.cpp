@@ -1,4 +1,6 @@
 #include <iostream>
+#include <thread>
+#include <chrono>
 #include "Position.h"
 #include "Organism.h"
 #include "Cow.h"
@@ -7,60 +9,100 @@
 #include "Guarana.h"
 #include "Grass.h"
 #include "World.h"
+#include "Toadstool.h"
 
 using namespace std;
 
 int main()
-{	
-	// World test
-	World world(10, 10);
+{
+    // World test
+    World world(10, 10);
 
-	// Trawa i krowa – test collision Cow–Grass
-	Position posGrass1{ 5, 5 };
-	Grass* grass1 = new Grass(posGrass1);
-	world.addOrganism(grass1);
+    // Inicjalizacja organizmów
+    // Owce
+    Position posSheep1{2, 2};
+    Sheep *sheep1 = new Sheep(posSheep1);
+    world.addOrganism(sheep1);
 
-	Position posCow{ 6, 5 };
-	Cow* cow = new Cow(posCow);
-	world.addOrganism(cow);
+    Position posSheep2{3, 3};
+    Sheep *sheep2 = new Sheep(posSheep2);
+    world.addOrganism(sheep2);
 
-	// Guarana i owca – test collision Sheep–Guarana
-	Position posGuarana{ 2, 2 };
-	Guarana* guarana = new Guarana(posGuarana);
-	world.addOrganism(guarana);
+    Position posSheep3{4, 4};
+    Sheep *sheep3 = new Sheep(posSheep3);
+    world.addOrganism(sheep3);
 
-	Position posSheep{ 2, 1 };
-	Sheep* sheep = new Sheep(posSheep);
-	world.addOrganism(sheep);
+    // Krowy
+    Position posCow1{5, 5};
+    Cow *cow1 = new Cow(posCow1);
+    world.addOrganism(cow1);
 
-	// Wilk i owca – test collision Wolf–Sheep
-	Position posSheep2{ 7, 5 };
-	Sheep* sheep2 = new Sheep(posSheep2);
-	world.addOrganism(sheep2);
+    Position posCow2{6, 6};
+    Cow *cow2 = new Cow(posCow2);
+    world.addOrganism(cow2);
 
-	Position posWolf{ 6, 6 };
-	Wolf* wolf = new Wolf(posWolf);
-	world.addOrganism(wolf);
+    // Wilk
+    Position posWolf{7, 7};
+    Wolf *wolf = new Wolf(posWolf);
+    world.addOrganism(wolf);
 
-	// Wypisz planszę i wykonaj kilka tur
-	cout << world.toString() << endl;
+    // Trawy
+    Position posGrass1{1, 1};
+    Grass *grass1 = new Grass(posGrass1);
+    world.addOrganism(grass1);
 
-	world.makeTurn();
-	cout << world.toString() << endl;
+    Position posGrass2{2, 3};
+    Grass *grass2 = new Grass(posGrass2);
+    world.addOrganism(grass2);
 
-	world.makeTurn();
-	cout << world.toString() << endl;
+    Position posGrass3{3, 5};
+    Grass *grass3 = new Grass(posGrass3);
+    world.addOrganism(grass3);
 
-	// Zapisz stan
-	world.writeWorld("world.bin");
+    Position posGrass4{4, 7};
+    Grass *grass4 = new Grass(posGrass4);
+    world.addOrganism(grass4);
 
-	world.makeTurn();
-	cout << world.toString() << endl;
+    // Guarany
+    Position posGuarana1{6, 2};
+    Guarana *guarana1 = new Guarana(posGuarana1);
+    world.addOrganism(guarana1);
 
-	// Powrót do tury 2
-	world.readWorld("world.bin");
-	cout << "Powrót do tury 2:\n";
-	cout << world.toString() << endl;
+    Position posGuarana2{7, 3};
+    Guarana *guarana2 = new Guarana(posGuarana2);
+    world.addOrganism(guarana2);
 
-	return 0;
+    // Muchomory
+    Position posToadstool1{8, 8};
+    Toadstool *toadstool1 = new Toadstool(posToadstool1);
+    world.addOrganism(toadstool1);
+
+    Position posToadstool2{9, 9};
+    Toadstool *toadstool2 = new Toadstool(posToadstool2);
+    world.addOrganism(toadstool2);
+
+    // Wypisanie planszy
+    cout << "Initial state:" << endl;
+    cout << world.toString() << endl;
+    world.getOrganisms();
+
+    // Wykonanie 15 tur
+    for (int i = 1; i <= 15; ++i)
+    {
+        cout << "Turn " << i << ":" << endl;
+        world.makeTurn();
+        cout << world.toString() << endl;
+
+        // Zapis świata w turze 8
+        if (i == 8)
+        {
+            cout << "Saving world at turn 8..." << endl;
+            world.writeWorld("world_turn8.bin");
+        }
+
+        // Odczekanie 3 sekund przed kolejną turą
+        this_thread::sleep_for(chrono::seconds(3));
+    }
+
+    return 0;
 }
