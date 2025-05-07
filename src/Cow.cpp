@@ -39,7 +39,3 @@ void Cow::sound() const {
 void Cow::serialize(fstream& file) const {
     Organism::serialize(file); // Wywołanie serializacji klasy bazowej
 }
-
-void Cow::deserialize(fstream& file) {
-    Organism::deserialize(file); // Wywołanie deserializacji klasy bazowej
-}

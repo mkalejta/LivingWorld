@@ -76,17 +76,11 @@ void Organism::serialize(fstream& file) const {
     file.write(species.data(), speciesSize);
 }
 
-void Organism::deserialize(fstream& file) {
-    int x, y, speciesSize;
-    file.read((char*)&power, sizeof(int));
-    file.read((char*)&x, sizeof(int));
-    file.read((char*)&y, sizeof(int));
-    position = Position(x, y);
-    file.read((char*)&speciesSize, sizeof(int));
-    species.resize(speciesSize);
-    file.read(&species[0], speciesSize);
-}
-
 void Organism::move(int dx, int dy) {
     position.move(dx, dy);
+}
+
+string Organism::toString() const {
+    return species + " at (" + to_string(position.getX()) + ", " + to_string(position.getY()) + ")" 
+           + " with power " + to_string(power);
 }

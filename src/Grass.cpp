@@ -35,6 +35,3 @@ void Grass::serialize(fstream& file) const {
     Plant::serialize(file); // Wywołanie serializacji klasy bazowej
 }
 
-void Grass::deserialize(fstream& file) {
-    Plant::deserialize(file); // Wywołanie deserializacji klasy bazowej
-}

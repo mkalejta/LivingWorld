@@ -46,7 +46,6 @@ public:
     virtual void collision(Organism* other) = 0;
     virtual bool isPredator() const { return false; }
 
-    // Serializacja i deserializacja
+    // Serializacja
     virtual void serialize(fstream& file) const;
-    virtual void deserialize(fstream& file);
 };

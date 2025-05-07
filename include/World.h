@@ -53,5 +53,7 @@ public:
 	Organism* getOrganismAt(Position pos) const;
 	void removeDeadOrganisms();
 	void sortOrganisms();
+
+	void getOrganisms();
 };
 

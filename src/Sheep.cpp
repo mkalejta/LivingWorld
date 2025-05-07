@@ -39,7 +39,3 @@ void Sheep::sound() const {
 void Sheep::serialize(fstream& file) const {
     Organism::serialize(file); // Wywołanie serializacji klasy bazowej
 }
-
-void Sheep::deserialize(fstream& file) {
-    Organism::deserialize(file); // Wywołanie deserializacji klasy bazowej
-}

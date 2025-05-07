@@ -203,27 +203,27 @@ void World::readWorld(string fileName) {
         organisms.clear();
 
         for (int i = 0; i < orgsSize; ++i) {
-            string species;
-            int speciesSize;
-            file.read((char*)&speciesSize, sizeof(int));
-            species.resize(speciesSize);
-            file.read(&species[0], speciesSize);
-
-            int x, y;
+            int power, x, y, speciesSize;
+            file.read((char*)&power, sizeof(int));
             file.read((char*)&x, sizeof(int));
             file.read((char*)&y, sizeof(int));
-            Position pos(x, y);
+            file.read((char*)&speciesSize, sizeof(int));
+            string species(speciesSize, '\0');
+            file.read(&species[0], speciesSize);
 
+            Position pos(x, y);
             Organism* org = nullptr;
+
             if (species == "g") org = new Grass(pos);
             else if (species == "G") org = new Guarana(pos);
-            else if (species == "W") org = new Wolf(pos);
-            else if (species == "S") org = new Sheep(pos);
-            else if (species == "C") org = new Cow(pos);
-
+            else if (species == "W") org = new Wolf(power, pos);
+            else if (species == "S") org = new Sheep(power, pos);
+            else if (species == "C") org = new Cow(power, pos);
+            
             if (org) {
-                org->deserialize(file);
                 organisms.push_back(org);
+            } else {
+                std::cerr << "Failed to deserialize organism." << std::endl;
             }
         }
         file.close();
@@ -246,4 +246,10 @@ string World::toString()
         result += "\n";
     }
     return result;
+}
+
+void World::getOrganisms() {
+    for (Organism* org : organisms) {
+        cout << org->toString() << endl;
+    }
 }
