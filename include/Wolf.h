@@ -9,7 +9,6 @@ public:
     char draw() const override;
     void action(World& world) override;
     void collision(Organism* other, World& world) override;
-    void reproduce(World& world) override;
     bool isPredator() const override;
     void sound() const override;
 

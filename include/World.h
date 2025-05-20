@@ -51,8 +51,12 @@ public:
 
 	bool isPositionOnWorld(int x, int y);
 
-    vector<Organism*>& getOrganismsList() { return organisms; }
+    vector<Organism*>& getOrganismsList() { return organisms; };
+	const vector<Organism*>& getOrganismsList() const { return organisms; };
 
 	void clear();
+	int getCurrentTurn() const { return turn; };
+
+    void updateAncestorsDeathTurn(Organism* deadOrganism, int deathTurn);
 };
 

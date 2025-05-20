@@ -6,6 +6,7 @@ using namespace std;
 class Animal : public Organism
 {
 	public:
+		Animal(int power, Position position, int birthTurn);
 		Animal(int power, Position position);
 		Animal();
 		using Organism::Organism;

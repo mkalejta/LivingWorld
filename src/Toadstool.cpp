@@ -26,8 +26,8 @@ void Toadstool::collision(Organism* other, World& world) {
 }
 
 void Toadstool::grow(World& world) {
-    // 3% szans na rozprzestrzenienie się na wolne pole obok
-    if (rand() % 100 < 3) {
+    // 5% szans na rozprzestrzenienie się na wolne pole obok
+    if (rand() % 100 < 5) {
         vector<Position> free = world.getVectorOfFreePositionsAround(getPosition());
         if (!free.empty()) {
             Position newPos = free[rand() % free.size()];

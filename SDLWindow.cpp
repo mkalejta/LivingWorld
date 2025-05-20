@@ -12,15 +12,17 @@
 #include "Grass.h"
 #include <string>
 #include <SDL_ttf.h>
+#include <vector>
 
 const int CELL_SIZE = 40;
-const int WIDTH = 15;
-const int HEIGHT = 15;
+const int WIDTH = 12;
+const int HEIGHT = 12;
 const int BUTTON_WIDTH = 140;
 const int BUTTON_HEIGHT = 40;
 const int BUTTON_MARGIN = 20;
 const int BUTTONS_COUNT = 5;
 const int BUTTONS_AREA_WIDTH = BUTTON_WIDTH + 2 * BUTTON_MARGIN;
+const int INFO_PANEL_WIDTH = 500;
 
 bool isInside(int x, int y, const SDL_Rect& rect) {
     return x >= rect.x && x <= rect.x + rect.w &&
@@ -41,6 +43,7 @@ void populateWorld(World& world) {
     world.clear();
     world.addOrganism(new Sheep(Position{2, 2}));
     world.addOrganism(new Sheep(Position{11, 3}));
+    world.addOrganism(new Sheep(Position{4, 6}));
     world.addOrganism(new Cow(Position{5, 5}));
     world.addOrganism(new Cow(Position{6, 10}));
     world.addOrganism(new Wolf(Position{7, 7}));
@@ -57,7 +60,7 @@ int main(int argc, char* argv[]) {
     // Zwiększamy szerokość okna o miejsce na przyciski
     SDL_Window* window = SDL_CreateWindow("LivingWorld SDL",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        WIDTH * CELL_SIZE + BUTTONS_AREA_WIDTH, HEIGHT * CELL_SIZE + 30, 0);
+        INFO_PANEL_WIDTH + WIDTH * CELL_SIZE + BUTTONS_AREA_WIDTH, HEIGHT * CELL_SIZE + 150, 0);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 
     TTF_Font* font = TTF_OpenFont("OpenSans-Regular.ttf", 18);
@@ -67,11 +70,11 @@ int main(int argc, char* argv[]) {
     }
 
     // Przyciski pionowo po prawej stronie planszy
-    SDL_Rect startBtn  = { WIDTH * CELL_SIZE + BUTTON_MARGIN, 30 + 0 * (BUTTON_HEIGHT + BUTTON_MARGIN), BUTTON_WIDTH, BUTTON_HEIGHT };
-    SDL_Rect stopBtn   = { WIDTH * CELL_SIZE + BUTTON_MARGIN, 30 + 1 * (BUTTON_HEIGHT + BUTTON_MARGIN), BUTTON_WIDTH, BUTTON_HEIGHT };
-    SDL_Rect saveBtn   = { WIDTH * CELL_SIZE + BUTTON_MARGIN, 30 + 2 * (BUTTON_HEIGHT + BUTTON_MARGIN), BUTTON_WIDTH, BUTTON_HEIGHT };
-    SDL_Rect loadBtn   = { WIDTH * CELL_SIZE + BUTTON_MARGIN, 30 + 3 * (BUTTON_HEIGHT + BUTTON_MARGIN), BUTTON_WIDTH, BUTTON_HEIGHT };
-    SDL_Rect resetBtn  = { WIDTH * CELL_SIZE + BUTTON_MARGIN, 30 + 4 * (BUTTON_HEIGHT + BUTTON_MARGIN), BUTTON_WIDTH, BUTTON_HEIGHT };
+    SDL_Rect startBtn  = { INFO_PANEL_WIDTH + WIDTH * CELL_SIZE + BUTTON_MARGIN, 30 + 0 * (BUTTON_HEIGHT + BUTTON_MARGIN), BUTTON_WIDTH, BUTTON_HEIGHT };
+    SDL_Rect stopBtn   = { INFO_PANEL_WIDTH + WIDTH * CELL_SIZE + BUTTON_MARGIN, 30 + 1 * (BUTTON_HEIGHT + BUTTON_MARGIN), BUTTON_WIDTH, BUTTON_HEIGHT };
+    SDL_Rect saveBtn   = { INFO_PANEL_WIDTH + WIDTH * CELL_SIZE + BUTTON_MARGIN, 30 + 2 * (BUTTON_HEIGHT + BUTTON_MARGIN), BUTTON_WIDTH, BUTTON_HEIGHT };
+    SDL_Rect loadBtn   = { INFO_PANEL_WIDTH + WIDTH * CELL_SIZE + BUTTON_MARGIN, 30 + 3 * (BUTTON_HEIGHT + BUTTON_MARGIN), BUTTON_WIDTH, BUTTON_HEIGHT };
+    SDL_Rect resetBtn  = { INFO_PANEL_WIDTH + WIDTH * CELL_SIZE + BUTTON_MARGIN, 30 + 4 * (BUTTON_HEIGHT + BUTTON_MARGIN), BUTTON_WIDTH, BUTTON_HEIGHT };
 
     World world(WIDTH, HEIGHT);
     int turnCount = 0;
@@ -80,6 +83,8 @@ int main(int argc, char* argv[]) {
 
     bool running = true, simulating = false;
     SDL_Event e;
+
+    Organism* selectedOrganism = nullptr;
 
     while (running) {
         while (SDL_PollEvent(&e)) {
@@ -95,6 +100,13 @@ int main(int argc, char* argv[]) {
                     simulating = false;
                     turnCount = 0;
                     populateWorld(world);
+                    selectedOrganism = nullptr;
+                }
+                if (x >= INFO_PANEL_WIDTH && x < INFO_PANEL_WIDTH + WIDTH * CELL_SIZE &&
+                    y >= 30 && y < HEIGHT * CELL_SIZE + 30) {
+                    int gridX = (x - INFO_PANEL_WIDTH) / CELL_SIZE;
+                    int gridY = (y - 30) / CELL_SIZE;
+                    selectedOrganism = world.getOrganismAt(Position(gridX, gridY));
                 }
             }
         }
@@ -102,7 +114,7 @@ int main(int argc, char* argv[]) {
         if (simulating) {
             world.makeTurn();
             ++turnCount;
-            std::this_thread::sleep_for(std::chrono::milliseconds(400));
+            std::this_thread::sleep_for(std::chrono::milliseconds(600));
         }
 
         SDL_SetRenderDrawColor(renderer, 230, 230, 230, 255);
@@ -111,12 +123,12 @@ int main(int argc, char* argv[]) {
         // Tura
         SDL_Color black = { 0, 0, 0 };
         renderText(renderer, font, "Tura: " + std::to_string(turnCount),
-                   20, 10, black);
+                   INFO_PANEL_WIDTH + WIDTH * CELL_SIZE + BUTTON_MARGIN, 10, black);
 
         // Plansza
         for (int y = 0; y < HEIGHT; ++y) {
             for (int x = 0; x < WIDTH; ++x) {
-                SDL_Rect rect = { x * CELL_SIZE, y * CELL_SIZE + 30, CELL_SIZE, CELL_SIZE };
+                SDL_Rect rect = { INFO_PANEL_WIDTH + x * CELL_SIZE, y * CELL_SIZE + 30, CELL_SIZE, CELL_SIZE };
                 Organism* org = world.getOrganismAt(Position(x, y));
                 if (org && org->isAlive()) {
                     switch (org->draw()) {
@@ -139,7 +151,7 @@ int main(int argc, char* argv[]) {
                 if (org && org->isAlive()) {
                     std::string symbol(1, org->draw());
                     renderText(renderer, font, symbol,
-                               x * CELL_SIZE + 12, y * CELL_SIZE + 38, black);
+                               INFO_PANEL_WIDTH + x * CELL_SIZE + 12, y * CELL_SIZE + 38, black);
                 }
             }
         }
@@ -166,6 +178,24 @@ int main(int argc, char* argv[]) {
         SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
         SDL_RenderFillRect(renderer, &resetBtn);
         renderText(renderer, font, "RESET", resetBtn.x + 30, resetBtn.y + 10, white);
+
+        if (selectedOrganism) {
+            int yOffset = 50;
+            renderText(renderer, font, "Przodkowie:", 20, yOffset, black);
+            yOffset += 25;
+            for (const AncestorInfo& anc : selectedOrganism->getAncestors()) {
+                if (anc.ancestor_ptr) {
+                    std::string info = anc.ancestor_ptr->getSpecies() + " (" +
+                        std::to_string(anc.ancestor_ptr->getPosition().getX()) + "," +
+                        std::to_string(anc.ancestor_ptr->getPosition().getY()) + ")" +
+                        " - (Birth, Death): " +
+                        std::to_string(anc.birth_turn) + ", " +
+                        std::to_string(anc.death_turn);
+                    renderText(renderer, font, info, 20, yOffset, black);
+                    yOffset += 20;
+                }
+            }
+        }
 
         SDL_RenderPresent(renderer);
     }

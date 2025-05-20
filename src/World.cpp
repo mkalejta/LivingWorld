@@ -9,6 +9,7 @@
 #include "Guarana.h"
 #include "Grass.h"
 #include "Toadstool.h"
+#include <set>
 
 using namespace std;
 
@@ -130,9 +131,9 @@ void World::makeTurn() {
     sortOrganisms();
 
     vector<Organism*> currentOrganisms = organisms;
+    std::set<Organism*> alreadyReproduced;
 
     for (Organism* org : currentOrganisms) {
-        // Jeśli organizm już nie istnieje (umarł lub zniknął)
         if (find(organisms.begin(), organisms.end(), org) == organisms.end())
             continue;
 
@@ -146,7 +147,6 @@ void World::makeTurn() {
         if (other != nullptr && other != org && other->isAlive()) {
             org->collision(other, *this);
             if (org->isAlive() && other->isAlive()) {
-                // Jeśli oba żyją, można wywołać drugą kolizję
                 other->collision(org, *this);
             }
         }
@@ -156,8 +156,23 @@ void World::makeTurn() {
         if (plant) {
             plant->grow(*this);
         } else {
-            org->reproduce(*this);
+            // Sprawdź, czy organizm już się rozmnażał w tej turze
+            if (alreadyReproduced.find(org) == alreadyReproduced.end()) {
+                // Przekaż zbiór do reproduce, aby dodać tam też partnera
+                org->reproduce(*this, alreadyReproduced);
+            }
         }
+    }
+
+    for (Organism* org : organisms) {
+        if (!org->isAlive() && org->getDeathTurn() == -1) {
+            org->setDeathTurn(turn);
+            updateAncestorsDeathTurn(org, turn);
+        }
+    }
+
+    for (Organism* org : organisms) {
+        org->setJustBorn(false);
     }
 
     removeDeadOrganisms();
@@ -190,13 +205,14 @@ void World::readWorld(string fileName) {
         organisms.clear();
 
         for (int i = 0; i < orgsSize; ++i) {
-            int power, x, y, speciesSize;
+            int power, x, y, speciesSize, birthTurn;
             file.read((char*)&power, sizeof(int));
             file.read((char*)&x, sizeof(int));
             file.read((char*)&y, sizeof(int));
             file.read((char*)&speciesSize, sizeof(int));
             string species(speciesSize, '\0');
             file.read(&species[0], speciesSize);
+            file.read((char*)&birthTurn, sizeof(int));
 
             Position pos(x, y);
             Organism* org = nullptr;
@@ -204,8 +220,8 @@ void World::readWorld(string fileName) {
             if (species == "g") org = new Grass(pos);
             else if (species == "G") org = new Guarana(pos);
             else if (species == "W") org = new Wolf(power, pos);
-            else if (species == "S") org = new Sheep(power, pos);
-            else if (species == "C") org = new Cow(power, pos);
+            else if (species == "S") org = new Sheep(power, pos, birthTurn);
+            else if (species == "C") org = new Cow(power, pos, birthTurn);
             else if (species == "T") org = new Toadstool(power, pos);
             else {
                 std::cerr << "Unknown species: " << species << std::endl;
@@ -250,4 +266,14 @@ void World::clear() {
     }
     organisms.clear();
     turn = 0;
+}
+
+void World::updateAncestorsDeathTurn(Organism* deadOrganism, int deathTurn) {
+    for (Organism* org : organisms) {
+        for (auto& anc : org->getAncestors()) {
+            if (anc.ancestor_ptr == deadOrganism && anc.death_turn == -1) {
+                anc.death_turn = deathTurn;
+            }
+        }
+    }
 }

@@ -9,9 +9,10 @@
 Sheep::Sheep(Position pos) : Animal(4, pos) 
 {
     setSpecies("S");
+    setBirthTurn(0);
 }
 
-Sheep::Sheep(int power, Position pos) : Animal(power, pos) 
+Sheep::Sheep(int power, Position pos, int birthTurn) : Animal(power, pos, birthTurn) 
 {
     setSpecies("S");
 }
@@ -33,25 +34,7 @@ void Sheep::action(World& world) {
     }
 }
 
-void Sheep::collision(Organism* other, World& world) {
-    Grass* grass = dynamic_cast<Grass*>(other);
-    if (grass) {
-        grass->kill(); // Grass zostaje zjedzony
-        setPower(getPower() + 1); // Sheep zyskuje +1 do power
-        return;
-    }
-
-    Guarana* guarana = dynamic_cast<Guarana*>(other);
-    if (guarana) {
-        guarana->kill(); // Guarana zostaje zjedzona
-        setPower(getPower() + 3); // Sheep zyskuje +3 do power
-        return;
-    }
-
-    if (other->isPredator()) {
-        this->kill(); // Sheep zostaje zabita przez drapieżnika
-    }
-}
+void Sheep::collision(Organism* other, World& world) {}
 
 void Sheep::sound() const {
     std::cout << "Sheep sound!" << std::endl;
@@ -61,17 +44,39 @@ void Sheep::serialize(fstream& file) const {
     Organism::serialize(file); // Wywołanie serializacji klasy bazowej
 }
 
-void Sheep::reproduce(World& world) {
+void Sheep::reproduce(World& world, std::set<Organism*>& alreadyReproduced) {
+    setPowerToReproduce(2);
+    
+    if (isJustBorn()) return;
+    
     for (Organism* org : world.getOrganismsList()) {
         if (org != this && org->getSpecies() == "S" &&
-            getPosition().distance(org->getPosition()) == 1.0) {
+            getPosition().distance(org->getPosition()) == 1.0 &&
+            alreadyReproduced.find(org) == alreadyReproduced.end()) {
+
+            if (getPower() < getPowerToReproduce() || org->getPower() < org->getPowerToReproduce())
+                continue;
+
             vector<Position> free = world.getVectorOfFreePositionsAround(getPosition());
             if (!free.empty()) {
+                int halfPower1 = getPower() / 2;
+                int halfPower2 = org->getPower() / 2;
+                setPower(halfPower1);
+                org->setPower(halfPower2);
+
+                Sheep* offspring = new Sheep(*this);
                 Position newPos = free[rand() % free.size()];
-                int halfPower = getPower() / 2;
-                setPower(halfPower);
-                Sheep* offspring = new Sheep(halfPower, newPos);
+                offspring->setPosition(newPos);
+                offspring->setBirthTurn(world.getCurrentTurn());
+
+                offspring->setAncestors(this->getAncestors());
+                offspring->addAncestor(this->getBirthTurn(), this->getDeathTurn(), this);
+                offspring->addAncestor(org->getBirthTurn(), org->getDeathTurn(), org);
+
                 world.addOrganism(offspring);
+
+                alreadyReproduced.insert(this);
+                alreadyReproduced.insert(org);
             }
             break;
         }

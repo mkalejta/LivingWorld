@@ -1,10 +1,16 @@
 #include "../include/Organism.h"
 #include <iostream>
 
+
 Organism::Organism(int power, Position position)
+    : power(power), position(position)
 {
-    setPower(power);
-    setPosition(position);
+    setSpecies("O");
+}
+
+Organism::Organism(int power, Position position, int birthTurn)
+    : power(power), position(position), birth_turn(birthTurn), death_turn(-1)
+{
     setSpecies("O");
 }
 
@@ -12,15 +18,15 @@ Organism::Organism(const Organism& other)
     : power(other.power),
       position(other.position),
       species(other.species),
-      initiative(other.initiative),
       powerToReproduce(other.powerToReproduce),
       ancestors(other.ancestors),
-      alive(other.alive) {}
+      alive(other.alive),
+      justBorn(true)
+{}
 
 Organism::Organism(Organism&& other) noexcept
     : power(std::move(other.power)), position(std::move(other.position)),
       species(std::move(other.species)),
-      initiative(std::move(other.initiative)),
       powerToReproduce(std::move(other.powerToReproduce)),
       ancestors(std::move(other.ancestors)),
       alive(std::move(other.alive)) {}
@@ -30,7 +36,6 @@ Organism& Organism::operator=(const Organism& other) {
         power = other.power;
         position = other.position;
         species = other.species;
-        initiative = other.initiative;
         powerToReproduce = other.powerToReproduce;
         ancestors = other.ancestors;
         alive = other.alive;
@@ -43,7 +48,6 @@ Organism& Organism::operator=(Organism&& other) noexcept {
         power = std::move(other.power);
         position = std::move(other.position);
         species = std::move(other.species);
-        initiative = std::move(other.initiative);
         powerToReproduce = std::move(other.powerToReproduce);
         ancestors = std::move(other.ancestors);
         alive = std::move(other.alive);
@@ -75,8 +79,8 @@ void Organism::setSpecies(string spec) {
     this->species = spec;
 }
 
-void Organism::addAncestor(int birthTurn, int deathTurn) {
-    ancestors.emplace_back(birthTurn, deathTurn);
+void Organism::addAncestor(int birthTurn, int deathTurn, Organism* ancestor) {
+    ancestors.push_back({birthTurn, deathTurn, ancestor});
 }
 
 void Organism::serialize(fstream& file) const {
@@ -88,6 +92,7 @@ void Organism::serialize(fstream& file) const {
     int speciesSize = species.size();
     file.write((char*)&speciesSize, sizeof(int));
     file.write(species.data(), speciesSize);
+    file.write((char*)&birth_turn, sizeof(int));
 }
 
 void Organism::move(int dx, int dy) {
@@ -97,4 +102,9 @@ void Organism::move(int dx, int dy) {
 string Organism::toString() const {
     return species + " at (" + to_string(position.getX()) + ", " + to_string(position.getY()) + ")" 
            + " with power " + to_string(power);
+}
+
+void Organism::kill(int currentTurn) {
+    alive = false;
+    death_turn = currentTurn;
 }
