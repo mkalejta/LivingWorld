@@ -62,15 +62,18 @@ void Cow::serialize(fstream& file) const {
 }
 
 void Cow::reproduce(World& world) {
-    if (getPower() >= getPowerToReproduce()) {
-        vector<Position> freePositions = world.getVectorOfFreePositionsAround(getPosition());
-        if (!freePositions.empty()) {
-            Position newPos = freePositions[rand() % freePositions.size()];
-            Cow* offspring = new Cow(*this); // Użycie konstruktora kopiującego
-            offspring->setPosition(newPos);
-            offspring->setPower(getPower() / 2); // Ustawienie połowy siły
-            setPower(getPower() / 2); // Rodzic traci połowę siły
-            world.addOrganism(offspring);
+    for (Organism* org : world.getOrganismsList()) {
+        if (org != this && org->getSpecies() == "C" &&
+            getPosition().distance(org->getPosition()) == 1.0) {
+            vector<Position> free = world.getVectorOfFreePositionsAround(getPosition());
+            if (!free.empty()) {
+                Position newPos = free[rand() % free.size()];
+                int halfPower = getPower() / 2;
+                setPower(halfPower);
+                Cow* offspring = new Cow(halfPower, newPos);
+                world.addOrganism(offspring);
+            }
+            break;
         }
     }
 }

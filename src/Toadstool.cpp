@@ -34,10 +34,9 @@ void Toadstool::reproduce(World& world) {
         vector<Position> freePositions = world.getVectorOfFreePositionsAround(getPosition());
         if (!freePositions.empty()) {
             Position newPos = freePositions[rand() % freePositions.size()];
-            Toadstool* offspring = new Toadstool(*this); // Użycie konstruktora kopiującego
-            offspring->setPosition(newPos);
-            offspring->setPower(getPower() / 2); // Ustawienie połowy siły
-            setPower(getPower() / 2); // Rodzic traci połowę siły
+            int halfPower = getPower() / 2;
+            setPower(halfPower);
+            Toadstool* offspring = new Toadstool(halfPower, newPos);
             world.addOrganism(offspring);
         }
     }

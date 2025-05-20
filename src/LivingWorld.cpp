@@ -28,10 +28,6 @@ int main()
     Sheep *sheep2 = new Sheep(posSheep2);
     world.addOrganism(sheep2);
 
-    Position posSheep3{4, 4};
-    Sheep *sheep3 = new Sheep(posSheep3);
-    world.addOrganism(sheep3);
-
     // Krowy
     Position posCow1{5, 5};
     Cow *cow1 = new Cow(posCow1);
@@ -55,31 +51,15 @@ int main()
     Grass *grass2 = new Grass(posGrass2);
     world.addOrganism(grass2);
 
-    Position posGrass3{3, 5};
-    Grass *grass3 = new Grass(posGrass3);
-    world.addOrganism(grass3);
-
-    Position posGrass4{4, 7};
-    Grass *grass4 = new Grass(posGrass4);
-    world.addOrganism(grass4);
-
-    // Guarany
+    // Guarana
     Position posGuarana1{6, 2};
     Guarana *guarana1 = new Guarana(posGuarana1);
     world.addOrganism(guarana1);
 
-    Position posGuarana2{7, 3};
-    Guarana *guarana2 = new Guarana(posGuarana2);
-    world.addOrganism(guarana2);
-
-    // Muchomory
+    // Muchomor
     Position posToadstool1{8, 8};
     Toadstool *toadstool1 = new Toadstool(posToadstool1);
     world.addOrganism(toadstool1);
-
-    Position posToadstool2{9, 9};
-    Toadstool *toadstool2 = new Toadstool(posToadstool2);
-    world.addOrganism(toadstool2);
 
     // Wypisanie planszy
     cout << "Initial state:" << endl;
@@ -87,7 +67,7 @@ int main()
     world.getOrganisms();
 
     // Wykonanie 15 tur
-    for (int i = 1; i <= 15; ++i)
+    for (int i = 1; i <= 12; ++i)
     {
         cout << "Turn " << i << ":" << endl;
         world.makeTurn();
@@ -97,12 +77,18 @@ int main()
         if (i == 8)
         {
             cout << "Saving world at turn 8..." << endl;
-            world.writeWorld("world_turn8.bin");
+            world.writeWorld("world.bin");
         }
 
         // Odczekanie 3 sekund przed kolejną turą
         this_thread::sleep_for(chrono::seconds(3));
     }
+
+    // Wczytanie świata z pliku
+    cout << "Loading world from file..." << endl;
+    world.readWorld("world.bin");
+    cout << "World loaded:" << endl;
+    cout << world.toString() << endl;
 
     return 0;
 }

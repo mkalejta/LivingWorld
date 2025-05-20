@@ -90,12 +90,6 @@ void World::addOrganism(Organism* organism)
 }
 
 void World::removeOrganism(Organism* org) {
-    // Jeśli organizm to trawa, zaznacz pozycję do regeneracji
-    Grass* grass = dynamic_cast<Grass*>(org);
-    if (grass != nullptr) {
-        markGrassToRegrow(grass->getPosition());
-    }
-
     // Usuń z wektora organisms
     auto it = std::find(organisms.begin(), organisms.end(), org);
     if (it != organisms.end()) {
@@ -103,23 +97,6 @@ void World::removeOrganism(Organism* org) {
     }
 
     delete org;
-}
-
-void World::markGrassToRegrow(Position pos) {
-    grassToRegrow.push_back({pos, 3}); // odrodzenie za 3 tury
-}
-
-void World::updateGrassRegrowth() {
-    for (auto it = grassToRegrow.begin(); it != grassToRegrow.end();) {
-        it->second--;
-        if (it->second <= 0) {
-            // Odrodzenie trawy w danej pozycji
-            addOrganism(new Grass(it->first));
-            it = grassToRegrow.erase(it);
-        } else {
-            ++it;
-        }
-    }
 }
 
 Organism* World::getOrganismAt(Position pos) const {
@@ -134,10 +111,6 @@ void World::removeDeadOrganisms() {
     auto it = organisms.begin();
     while (it != organisms.end()) {
         if (!(*it)->isAlive()) {
-            Grass* grass = dynamic_cast<Grass*>(*it);
-            if (grass != nullptr) {
-                markGrassToRegrow(grass->getPosition());
-            }
             delete *it;
             it = organisms.erase(it);
         } else {
@@ -183,7 +156,6 @@ void World::makeTurn() {
     }
 
     removeDeadOrganisms(); 
-    updateGrassRegrowth(); 
     turn++;
 }
 
@@ -249,16 +221,14 @@ void World::readWorld(string fileName) {
 string World::toString()
 {
     string result = "\nturn: " + to_string(getTurn()) + "\n";
-    string spec;
-
     for (int wY = 0; wY < getWorldY(); ++wY) {
         for (int wX = 0; wX < getWorldX(); ++wX) {
-            spec = getOrganismFromPosition(wX, wY);
-            if (spec != "")
-                result += spec;
+            Organism* org = getOrganismAt(Position(wX, wY));
+            if (org && org->isAlive())
+                result += org->draw();
             else
                 result += separator;
-        };
+        }
         result += "\n";
     }
     return result;

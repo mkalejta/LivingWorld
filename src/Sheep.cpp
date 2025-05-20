@@ -62,15 +62,18 @@ void Sheep::serialize(fstream& file) const {
 }
 
 void Sheep::reproduce(World& world) {
-    if (getPower() >= getPowerToReproduce()) {
-        vector<Position> freePositions = world.getVectorOfFreePositionsAround(getPosition());
-        if (!freePositions.empty()) {
-            Position newPos = freePositions[rand() % freePositions.size()];
-            Sheep* offspring = new Sheep(*this); // Użycie konstruktora kopiującego
-            offspring->setPosition(newPos);
-            offspring->setPower(getPower() / 2); // Ustawienie połowy siły
-            setPower(getPower() / 2); // Rodzic traci połowę siły
-            world.addOrganism(offspring);
+    for (Organism* org : world.getOrganismsList()) {
+        if (org != this && org->getSpecies() == "S" &&
+            getPosition().distance(org->getPosition()) == 1.0) {
+            vector<Position> free = world.getVectorOfFreePositionsAround(getPosition());
+            if (!free.empty()) {
+                Position newPos = free[rand() % free.size()];
+                int halfPower = getPower() / 2;
+                setPower(halfPower);
+                Sheep* offspring = new Sheep(halfPower, newPos);
+                world.addOrganism(offspring);
+            }
+            break;
         }
     }
 }

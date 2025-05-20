@@ -9,11 +9,6 @@ class Organism;
 
 using namespace std;
 
-struct GrassRegrowInfo {
-    Position position;
-    int turnsLeft;
-};
-
 class World
 {
 private:
@@ -24,8 +19,7 @@ private:
 	char separator = '.';
 	string getOrganismFromPosition(int x, int y);
 	bool isPositionFree(Position position);
-	std::vector<std::pair<Position, int>> grassToRegrow;
-
+	
 public:
 	World(int worldX, int worldY);
 	World() : World(6, 6) {};
@@ -47,8 +41,6 @@ public:
 	
 	string toString();
 
-    void markGrassToRegrow(Position pos);
-    void updateGrassRegrowth();
     void removeOrganism(Organism* org);
 
 	Organism* getOrganismAt(Position pos) const;
@@ -58,5 +50,7 @@ public:
 	void getOrganisms();
 
 	bool isPositionOnWorld(int x, int y);
+
+    vector<Organism*>& getOrganismsList() { return organisms; }
 };
 

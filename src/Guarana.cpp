@@ -49,10 +49,9 @@ void Guarana::reproduce(World& world) {
         vector<Position> freePositions = world.getVectorOfFreePositionsAround(getPosition());
         if (!freePositions.empty()) {
             Position newPos = freePositions[rand() % freePositions.size()];
-            Guarana* offspring = new Guarana(*this); // Użycie konstruktora kopiującego
-            offspring->setPosition(newPos);
-            offspring->setPower(getPower() / 2); // Ustawienie połowy siły
-            setPower(getPower() / 2); // Rodzic traci połowę siły
+            int halfPower = getPower() / 2;
+            setPower(halfPower);
+            Guarana* offspring = new Guarana(halfPower, newPos);
             world.addOrganism(offspring);
         }
     }

@@ -63,15 +63,5 @@ void Wolf::serialize(fstream& file) const {
 }
 
 void Wolf::reproduce(World& world) {
-    if (getPower() >= getPowerToReproduce()) {
-        vector<Position> freePositions = world.getVectorOfFreePositionsAround(getPosition());
-        if (!freePositions.empty()) {
-            Position newPos = freePositions[rand() % freePositions.size()];
-            Wolf* offspring = new Wolf(*this); // Użycie konstruktora kopiującego
-            offspring->setPosition(newPos);
-            offspring->setPower(getPower() / 2); // Ustawienie połowy siły
-            setPower(getPower() / 2); // Rodzic traci połowę siły
-            world.addOrganism(offspring);
-        }
-    }
+    // Wilk się nie rozmnaża
 }

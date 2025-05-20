@@ -27,7 +27,6 @@ void Grass::collision(Organism* other, World& world) {
 
     if (cow || sheep) {
         this->kill(); // Grass zostaje zjedzony
-        world.markGrassToRegrow(getPosition()); // Grass odrasta po 3 turach
     }
 }
 
@@ -44,15 +43,12 @@ void Grass::serialize(fstream& file) const {
 }
 
 void Grass::reproduce(World& world) {
-    if (getPower() >= getPowerToReproduce()) {
-        vector<Position> freePositions = world.getVectorOfFreePositionsAround(getPosition());
-        if (!freePositions.empty()) {
-            Position newPos = freePositions[rand() % freePositions.size()];
-            Grass* offspring = new Grass(*this); // Użycie konstruktora kopiującego
-            offspring->setPosition(newPos);
-            offspring->setPower(getPower() / 2); // Ustawienie połowy siły
-            setPower(getPower() / 2); // Rodzic traci połowę siły
-            world.addOrganism(offspring);
-        }
+    vector<Position> free = world.getVectorOfFreePositionsAround(getPosition());
+    if (!free.empty()) {
+        Position newPos = free[rand() % free.size()];
+        int halfPower = getPower() / 2;
+        setPower(halfPower);
+        Grass* offspring = new Grass(halfPower, newPos);
+        world.addOrganism(offspring);
     }
 }

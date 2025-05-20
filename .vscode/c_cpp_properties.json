@@ -1,0 +1,17 @@
+{
+  "configurations": [
+    {
+      "name": "Win32",
+      "includePath": [
+        "${workspaceFolder}/include",
+        "C:/libs/SDL2-2.0.22/include"
+      ],
+      "defines": [],
+      "compilerPath": "C:/mingw64/bin/g++.exe",
+      "cStandard": "c11",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "windows-gcc-x64"
+    }
+  ],
+  "version": 4
+}
