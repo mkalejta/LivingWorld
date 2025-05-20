@@ -44,10 +44,6 @@ void Wolf::collision(Organism* other, World& world) {
         setPower(getPower() + 2); // Wolf zyskuje +2 do power
         return;
     }
-
-    if (other->getPower() > this->getPower()) {
-        this->kill(); // Wolf zostaje zabity przez silniejszy organizm
-    }
 }
 
 bool Wolf::isPredator() const {

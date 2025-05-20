@@ -10,8 +10,7 @@ public:
     char draw() const override;
     void action(World& world) override;
     void collision(Organism* other, World& world) override;
-    void reproduce(World& world) override;
-    void grow() override;
+    void grow(World& world) override;
     
     void serialize(fstream& file) const override;
 };

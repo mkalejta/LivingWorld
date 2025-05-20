@@ -31,28 +31,18 @@ void Guarana::collision(Organism* other, World& world) {
     }
 }
 
-void Guarana::grow() {
-    if (getPower() < 5) {
-        if (rand() % 100 < 15) {
-            setPower(getPower() + 1);
-            std::cout << "Guarana has grown! New power: " << getPower() << std::endl;
+void Guarana::grow(World& world) {
+    // 10% szans na rozprzestrzenienie się na wolne pole obok
+    if (rand() % 100 < 10) {
+        vector<Position> free = world.getVectorOfFreePositionsAround(getPosition());
+        if (!free.empty()) {
+            Position newPos = free[rand() % free.size()];
+            Guarana* offspring = new Guarana(2, newPos);
+            world.addOrganism(offspring);
         }
     }
 }
 
 void Guarana::serialize(fstream& file) const {
     Plant::serialize(file); // Wywołanie serializacji klasy bazowej
-}
-
-void Guarana::reproduce(World& world) {
-    if (getPower() >= getPowerToReproduce()) {
-        vector<Position> freePositions = world.getVectorOfFreePositionsAround(getPosition());
-        if (!freePositions.empty()) {
-            Position newPos = freePositions[rand() % freePositions.size()];
-            int halfPower = getPower() / 2;
-            setPower(halfPower);
-            Guarana* offspring = new Guarana(halfPower, newPos);
-            world.addOrganism(offspring);
-        }
-    }
 }

@@ -25,18 +25,13 @@ void Toadstool::collision(Organism* other, World& world) {
     this->kill();
 }
 
-void Toadstool::grow() {
-    // Muchomor nie rośnie
-}
-
-void Toadstool::reproduce(World& world) {
-    if (getPower() >= getPowerToReproduce()) {
-        vector<Position> freePositions = world.getVectorOfFreePositionsAround(getPosition());
-        if (!freePositions.empty()) {
-            Position newPos = freePositions[rand() % freePositions.size()];
-            int halfPower = getPower() / 2;
-            setPower(halfPower);
-            Toadstool* offspring = new Toadstool(halfPower, newPos);
+void Toadstool::grow(World& world) {
+    // 3% szans na rozprzestrzenienie się na wolne pole obok
+    if (rand() % 100 < 3) {
+        vector<Position> free = world.getVectorOfFreePositionsAround(getPosition());
+        if (!free.empty()) {
+            Position newPos = free[rand() % free.size()];
+            Toadstool* offspring = new Toadstool(3, newPos);
             world.addOrganism(offspring);
         }
     }

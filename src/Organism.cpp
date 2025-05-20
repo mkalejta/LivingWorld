@@ -13,7 +13,6 @@ Organism::Organism(const Organism& other)
       position(other.position),
       species(other.species),
       initiative(other.initiative),
-      liveLength(other.liveLength),
       powerToReproduce(other.powerToReproduce),
       ancestors(other.ancestors),
       alive(other.alive) {}
@@ -22,7 +21,6 @@ Organism::Organism(Organism&& other) noexcept
     : power(std::move(other.power)), position(std::move(other.position)),
       species(std::move(other.species)),
       initiative(std::move(other.initiative)),
-      liveLength(std::move(other.liveLength)),
       powerToReproduce(std::move(other.powerToReproduce)),
       ancestors(std::move(other.ancestors)),
       alive(std::move(other.alive)) {}
@@ -33,7 +31,6 @@ Organism& Organism::operator=(const Organism& other) {
         position = other.position;
         species = other.species;
         initiative = other.initiative;
-        liveLength = other.liveLength;
         powerToReproduce = other.powerToReproduce;
         ancestors = other.ancestors;
         alive = other.alive;
@@ -47,7 +44,6 @@ Organism& Organism::operator=(Organism&& other) noexcept {
         position = std::move(other.position);
         species = std::move(other.species);
         initiative = std::move(other.initiative);
-        liveLength = std::move(other.liveLength);
         powerToReproduce = std::move(other.powerToReproduce);
         ancestors = std::move(other.ancestors);
         alive = std::move(other.alive);

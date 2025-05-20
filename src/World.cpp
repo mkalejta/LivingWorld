@@ -137,28 +137,32 @@ void World::makeTurn() {
             continue;
 
         org->setPower(org->getPower() + 1);
-        org->setLiveLength(org->getLiveLength() - 1);
-
-        if (org->getLiveLength() <= 0) {
-            org->kill();
-        }
 
         org->action(*this);
-        
+
         Position newPos = org->getPosition();
         Organism* other = getOrganismAt(newPos);
-        
+
         if (other != nullptr && other != org && other->isAlive()) {
             org->collision(other, *this);
+            if (org->isAlive() && other->isAlive()) {
+                // Jeśli oba żyją, można wywołać drugą kolizję
+                other->collision(org, *this);
+            }
         }
-        
-        org->reproduce(*this);
+
+        // Wywołaj reproduce dla zwierząt, grow dla roślin
+        Plant* plant = dynamic_cast<Plant*>(org);
+        if (plant) {
+            plant->grow(*this);
+        } else {
+            org->reproduce(*this);
+        }
     }
 
-    removeDeadOrganisms(); 
+    removeDeadOrganisms();
     turn++;
 }
-
 
 void World::writeWorld(string fileName) {
     fstream file(fileName, ios::out | ios::binary);
@@ -238,4 +242,12 @@ void World::getOrganisms() {
     for (Organism* org : organisms) {
         cout << org->toString() << endl;
     }
+}
+
+void World::clear() {
+    for (Organism* org : organisms) {
+        delete org;
+    }
+    organisms.clear();
+    turn = 0;
 }

@@ -30,25 +30,18 @@ void Grass::collision(Organism* other, World& world) {
     }
 }
 
-void Grass::grow() {
-    if (getPower() < 5) {
-        if (rand() % 100 < 15) {
-            std::cout << "Grass has grown!" << std::endl;
+void Grass::grow(World& world) {
+    // 15% szans na rozprzestrzenienie się na wolne pole obok
+    if (rand() % 100 < 15) {
+        vector<Position> free = world.getVectorOfFreePositionsAround(getPosition());
+        if (!free.empty()) {
+            Position newPos = free[rand() % free.size()];
+            Grass* offspring = new Grass(1, newPos);
+            world.addOrganism(offspring);
         }
     }
 }
 
 void Grass::serialize(fstream& file) const {
     Plant::serialize(file); // Wywołanie serializacji klasy bazowej
-}
-
-void Grass::reproduce(World& world) {
-    vector<Position> free = world.getVectorOfFreePositionsAround(getPosition());
-    if (!free.empty()) {
-        Position newPos = free[rand() % free.size()];
-        int halfPower = getPower() / 2;
-        setPower(halfPower);
-        Grass* offspring = new Grass(halfPower, newPos);
-        world.addOrganism(offspring);
-    }
 }

@@ -1,6 +1,6 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Iinclude -IC:/libs/SDL2-2.0.22/include
-LDFLAGS = -LC:/libs/SDL2-2.0.22/lib/x64 -lSDL2main -lSDL2
+CXXFLAGS = -std=c++17 -Wall -Iinclude -IC:/libs/SDL2-2.0.22/include -IC:/libs/SDL2_ttf-2.20.2/include
+LDFLAGS = -LC:/libs/SDL2-2.0.22/lib/x64 -LC:/libs/SDL2_ttf-2.20.2/lib/x64 -lSDL2main -lSDL2 -lSDL2_ttf
 
 SRC_DIR = src
 OBJ_DIR = obj
@@ -36,6 +36,7 @@ $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR) *.o
+	rm -rf $(OBJ_DIR)/*.o $(OBJ_DIR)
+	rm -f $(BIN_DIR)/SDLWindow $(BIN_DIR)/SDLWindow.exe
 
 .PHONY: all clean

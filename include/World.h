@@ -52,5 +52,7 @@ public:
 	bool isPositionOnWorld(int x, int y);
 
     vector<Organism*>& getOrganismsList() { return organisms; }
+
+	void clear();
 };
 

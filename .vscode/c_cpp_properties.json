@@ -4,7 +4,8 @@
       "name": "Win32",
       "includePath": [
         "${workspaceFolder}/include",
-        "C:/libs/SDL2-2.0.22/include"
+        "C:/libs/SDL2-2.0.22/include",
+        "C:/libs/SDL2_ttf-2.20.2/include"
       ],
       "defines": [],
       "compilerPath": "C:/mingw64/bin/g++.exe",

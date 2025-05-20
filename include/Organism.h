@@ -17,7 +17,6 @@ private:
     Position position;
     string species;
     int initiative; // Priorytet decydujący o kolejności ruchu
-    int liveLength; // Liczba tur do końca życia
     int powerToReproduce; // Minimalna siła do rozmnażania
 
 protected:
@@ -41,8 +40,6 @@ public:
     void setSpecies(string spec);
     int getPowerToReproduce() const { return powerToReproduce; }
     void setPowerToReproduce(int powerToReproduce) { this->powerToReproduce = powerToReproduce; }
-    int getLiveLength() const { return liveLength; }
-    void setLiveLength(int liveLength) { this->liveLength = liveLength; }
 
     void addAncestor(int birthTurn, int deathTurn);
 
@@ -55,7 +52,8 @@ public:
     virtual void action(World& world) = 0;
     virtual void collision(Organism* other, World& world) = 0;
     virtual bool isPredator() const { return false; };
-    virtual void reproduce(World& world) = 0;
+    virtual void reproduce(World& world) {};
+    virtual void grow(World& world) {};
 
     // Serializacja
     virtual void serialize(fstream& file) const;
